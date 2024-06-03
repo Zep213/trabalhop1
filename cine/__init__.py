@@ -252,5 +252,4 @@ def menu_comidas():
         print(f'obrigado por ter escolhido nosso(s) combo(s) de {combo}')
 
     elif (op == 0):
-        print('\033[93mseguindo ao filme..\033[0;0m')
-
+        print('\033[93mseguindo ao filme... \033[0;0m')
