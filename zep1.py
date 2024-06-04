@@ -1,7 +1,11 @@
 import cine
+from babel.dates import format_date
+from datetime import datetime
+
 usuarios = {'joseph': ['joseph', 2, 'zep']}
 filmes = ['vingadores', 'homem aranha', 'deadpool']
 opmenu = 99
+
 while (opmenu != 0):
     cine.menu_main()
     opmenu = int(input('digite a opçao que deseja: \033[0;0m'))
