@@ -1,5 +1,5 @@
 import cine
-usuarios = {'joseph': ['joseph', 2, 'zep'],}
+usuarios = {'joseph': ['joseph', 2, 'zep']}
 filmes = ['vingadores', 'homem aranha', 'deadpool']
 opmenu = 99
 while (opmenu != 0):

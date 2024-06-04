@@ -66,7 +66,7 @@ def compra_ingresso1():
 
     while True:
         tipo_ingresso = input(
-            'voce deseja comprar ingressos i, m ou e para sair da compra: ')
+            'voce deseja comprar ingressos i, m ou s para sair da compra: ')
 
         if tipo_ingresso == 'i':
             ingressos_inteiros = int(
@@ -84,7 +84,7 @@ def compra_ingresso1():
             else:
                 ingressos_vendidos.append(f'{ingressos_meios} ingressos de meia-entrada')
                 total_meios += ingressos_meios
-        elif tipo_ingresso == 'e':
+        elif tipo_ingresso == 's':
             break
 
         else:
@@ -113,7 +113,7 @@ def compra_ingresso2():
 
     while True:
         tipo_ingresso = input(
-            'voce deseja comprar ingressos i, m ou e para sair da compra: ')
+            'voce deseja comprar ingressos i, m ou s para sair da compra: ')
 
         if tipo_ingresso == 'i':
             ingressos_inteiros = int(
@@ -131,7 +131,7 @@ def compra_ingresso2():
             else:
                 ingressos_vendidos.append(f'{ingressos_meios} ingressos de meia-entrada')
                 total_meios += ingressos_meios
-        elif tipo_ingresso == 'e':
+        elif tipo_ingresso == 's':
             break
 
         else:
@@ -159,7 +159,7 @@ def compra_ingresso3():
 
     while True:
         tipo_ingresso = input(
-            'voce deseja comprar ingressos i, m ou e para sair da compra: ')
+            'voce deseja comprar ingressos i, m ou s para sair da compra: ')
 
         if tipo_ingresso == 'i':
             ingressos_inteiros = int(
@@ -177,7 +177,7 @@ def compra_ingresso3():
             else:
                 ingressos_vendidos.append(f'{ingressos_meios} ingressos de meia-entrada')
                 total_meios += ingressos_meios
-        elif tipo_ingresso == 'e':
+        elif tipo_ingresso == 's':
             break
 
         else:
