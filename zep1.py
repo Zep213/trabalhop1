@@ -85,3 +85,4 @@ while (opmenu != 0):
                             cine.filme_2()
                         elif (opescolha == 3):
                             cine.filme_3()
+print('pao')
