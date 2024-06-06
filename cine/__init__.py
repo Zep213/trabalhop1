@@ -1,5 +1,47 @@
 from babel.dates import format_date
 from datetime import datetime
+
+
+salas = {
+    1: {
+        "nome": "Sala 1 - 2D",
+        "preco_ingresso_inteiro": 15.00,
+        "preco_ingresso_meio": 7.50,
+        "num_poltronas": 100,
+        "opcoes": ["dublado", "legendado"]
+    },
+    2: {
+        "nome": "Sala 2 - 3D",
+        "preco_ingresso_inteiro": 20.00,
+        "preco_ingresso_meio": 10.00,
+        "num_poltronas": 80,
+        "opcoes": ["dublado", "legendado"]
+    },
+    3: {
+        "nome": "Sala 3 - IMAX",
+        "preco_ingresso_inteiro": 25.00,
+        "preco_ingresso_meio": 12.50,
+        "num_poltronas": 60,
+        "opcoes": ["dublado", "legendado"]
+    }
+}
+promotions = {
+    "terça-feira": {
+        "nome": "Terça 2x1",
+        "detalhes": ["Ingressos em dobro: Na compra de um ingresso, o segundo é gratuito."],
+        "desconto": 0.0  # Sem desconto adicional
+    },
+    "quarta-feira": {
+        "nome": "Quarta do Cliente Fiel",
+        "detalhes": ["Desconto para membros: 50% de desconto no ingresso para clientes cadastrados.",
+                     "Acumule pontos: Dobre os pontos de fidelidade para cada ingresso comprado."],
+        "desconto": 0.50  # 50% de desconto para membros
+    }
+}
+today = format_date(datetime.now(), 'EEEE', locale='pt_BR').lower()
+today_promotion = promotions.get(today, {"nome": "Nenhuma promoção disponível", "detalhes": [""], "desconto": 0.0})
+ocupacao_salas = {sala_id: sala_info["num_poltronas"] for sala_id, sala_info in salas.items()}
+lista_compras = []
 def listar_para(list):
     for indices_att in list:
         print(f'{list.index(indices_att)} - {indices_att}')
@@ -48,210 +90,95 @@ def cadastrar_cliente(dict):
 def menu_cliente():
     print('\033[34m________MENU CLIENTE________\033[0;0m')
     print('\033[96m1-compra de ingressos')
-    print('2-filmes em cartazes/horarios')
     print('0-sair\033[0;0m')
 
-def menu_salas():
-    print('\033[34m________MENU DA SALA________\033[0;0m')
-    print('\033[92m1-sala 1 50 vagas / ingressos: 35R$ / 17,50R$')
-    print('2-sala 2 35 vagas / ingressos: 24R$ / 12R$')
-    print('3-sala 3 15 vagas / ingressos: 30R$ / 15R$\033[0;0m')
-    print('\033[97m0-menu do cliente\033[0;0m')
-
-def compra_ingresso1():
-    capacidade_maxima = 50
-    valor_ingresso_inteiro = 35
-    valor_ingresso_meio = 17.50
-    ingressos_vendidos = []
-    total_inteiros = 0
-    total_meios = 0
-
-    while True:
-        tipo_ingresso = input(
-            'voce deseja comprar ingressos i, m ou s para sair da compra: ')
-
-        if tipo_ingresso == 'i':
-            ingressos_inteiros = int(
-                input('quantos ingressos inteiros você deseja comprar: '))
-            if total_inteiros + ingressos_inteiros + total_meios > capacidade_maxima:
-                print('desculpe, a sala está lotada.')
+def exibir_salas(dict,nome):
+    global sala_info, opcao_escolhida
+    print(f"Promoção de hoje {today} : {today_promotion['nome']}")
+    for detalhe in today_promotion['detalhes']:
+        print(f"{detalhe}")
+    print(f'\nSalas disponiveis:')
+    for sala_id, sala_info in salas.items():
+        poltronas_disponiveis = ocupacao_salas[sala_id]
+        print(f'{sala_id} : {sala_info['nome']} - Preço do ingresso inteiro: R$ {sala_info['preco_ingresso_inteiro']}'
+              f' - Preço do meio-ingresso: R$ {sala_info['preco_ingresso_meio']} '
+              f'- Poltronas disponíveis: {poltronas_disponiveis}')
+        for opcao in sala_info['opcoes']:
+            print(f' - {opcao}')
+    sala_escolhida = int(input("\nDigite o número da sala escolhida: "))
+    if sala_escolhida in salas:
+        sala_info = salas[sala_escolhida]
+    else:
+        print("Sala inválida. Por favor, escolha uma sala válida.")
+        while True:
+            opcao_escolhida = input("Você prefere assistir ao filme dublado ou legendado? ").lower()
+            if opcao_escolhida in sala_info["opcoes"]:
+                break
             else:
-                ingressos_vendidos.append(f'{ingressos_inteiros} ingressos inteiros')
-                total_inteiros += ingressos_inteiros
-        elif tipo_ingresso == 'm':
-            ingressos_meios = int(
-                input('quantos ingressos de meia-entrada você deseja comprar: '))
-            if total_meios + ingressos_meios + total_inteiros > capacidade_maxima:
-                print('desculpe, a sala está lotada.')
-            else:
-                ingressos_vendidos.append(f'{ingressos_meios} ingressos de meia-entrada')
-                total_meios += ingressos_meios
-        elif tipo_ingresso == 's':
-            break
+                print("Opção inválida. Por favor, escolha 'dublado' ou 'legendado'.")
 
-        else:
-            print(
-                "opcao invalida, por favor, escolha entre 'inteiros', 'meia-entrada' ou 'encerrar'.")
+    # Calcular o preço final do ingresso com desconto
+    desconto = today_promotion["desconto"]
+    if today == "quarta-feira" and dict:
+        desconto += 0.10  # Bônus de 10% para clientes cadastrados nas quartas-feiras
+        print("Bônus especial de quarta-feira aplicado para clientes cadastrados: Desconto adicional de 10%")
 
-    total_ingressos = total_inteiros + total_meios
+    preco_final_inteiro = sala_info["preco_ingresso_inteiro"] * (1 - desconto)
+    preco_final_meio = sala_info["preco_ingresso_meio"] * (1 - desconto)
 
-    if total_ingressos <= capacidade_maxima:
-        valor_total = (total_inteiros * valor_ingresso_inteiro) + (
-                total_meios * valor_ingresso_meio)
-        print(f'\033[32mo valor total a pagar é de R${valor_total}\033[0;0m')
+    # Solicitar a quantidade de ingressos inteiros e meio
+    ingressos_gratis_inteiros = 0
+    ingressos_gratis_meios = 0
+    quantidade_inteiros = int(input("Digite a quantidade de ingressos inteiros: "))
+    quantidade_meios = int(input("Digite a quantidade de meio-ingressos: "))
+    for i in range(quantidade_inteiros):
+        if quantidade_inteiros > 0 and quantidade_inteiros % 2 == 0:
+            ingressos_gratis_inteiros += 1
+    for i in range(quantidade_meios):
+        if quantidade_meios > 0 and quantidade_meios % 2:
+            ingressos_gratis_meios += 1
+    # Aplicar a promoção "Terça 2x1" se hoje for terça-feira
+    if today == "terça-feira":
+        ingressos_gratis_inteiros = ingressos_gratis_inteiros # Para cada ingresso inteiro comprado, o cliente ganha um grátis
+        ingressos_gratis_meios = ingressos_gratis_meios  # Para cada meio-ingresso comprado, o cliente ganha um grátis
+        quantidade_inteiros_totais = quantidade_inteiros + ingressos_gratis_inteiros
+        quantidade_meios_totais = quantidade_meios + ingressos_gratis_meios
+        print(
+            f"Promoção Terça 2x1 aplicada: Você recebe {ingressos_gratis_inteiros} "
+            f"ingressos inteiros grátis e {ingressos_gratis_meios} meio-ingressos grátis!")
+    else:
+        quantidade_inteiros_totais = quantidade_inteiros
+        quantidade_meios_totais = quantidade_meios
 
-        print('ingressos vendidos:')
-        for ingresso in ingressos_vendidos:
-            print(ingresso)
+    # Verificar disponibilidade de poltronas
+    total_ingressos = quantidade_inteiros_totais + quantidade_meios_totais
+    if total_ingressos > ocupacao_salas[sala_escolhida]:
+        print("Quantidade de ingressos excede o número de poltronas disponíveis.")
+    else:
+        # Atualizar a ocupação das poltronas
+        ocupacao_salas[sala_escolhida] -= total_ingressos
+    compra = {
+        "cliente": nome,
+        "sala": sala_escolhida,
+        "opcao": opcao_escolhida,
+        "quantidade_inteiros": quantidade_inteiros,
+        "quantidade_meios": quantidade_meios,
+        "preco_total": (quantidade_inteiros * preco_final_inteiro) + (quantidade_meios * preco_final_meio)
+    }
+    lista_compras.append(compra)
 
+    # Calcular o valor total
+    valor_total_inteiros = quantidade_inteiros * preco_final_inteiro
+    valor_total_meios = quantidade_meios * preco_final_meio
+    valor_total = valor_total_inteiros + valor_total_meios
 
-def compra_ingresso2():
-    capacidade_maxima = 35
-    valor_ingresso_inteiro = 24
-    valor_ingresso_meio = 12
-    ingressos_vendidos = []
-    total_inteiros = 0
-    total_meios = 0
-
-    while True:
-        tipo_ingresso = input(
-            'voce deseja comprar ingressos i, m ou s para sair da compra: ')
-
-        if tipo_ingresso == 'i':
-            ingressos_inteiros = int(
-                input('quantos ingressos inteiros você deseja comprar: '))
-            if total_inteiros + ingressos_inteiros + total_meios > capacidade_maxima:
-                print('desculpe, a sala está lotada.')
-            else:
-                ingressos_vendidos.append(f'{ingressos_inteiros} ingressos inteiros')
-                total_inteiros += ingressos_inteiros
-        elif tipo_ingresso == 'm':
-            ingressos_meios = int(
-                input('quantos ingressos de meia-entrada você deseja comprar: '))
-            if total_meios + ingressos_meios + total_inteiros > capacidade_maxima:
-                print('desculpe, a sala está lotada.')
-            else:
-                ingressos_vendidos.append(f'{ingressos_meios} ingressos de meia-entrada')
-                total_meios += ingressos_meios
-        elif tipo_ingresso == 's':
-            break
-
-        else:
-            print("opcao invalida, por favor, escolha entre 'inteiros', 'meia-entrada'"
-                  " ou 'encerrar'.")
-
-    total_ingressos = total_inteiros + total_meios
-
-    if total_ingressos <= capacidade_maxima:
-        valor_total = (total_inteiros * valor_ingresso_inteiro) + (
-                total_meios * valor_ingresso_meio)
-        print(f'o valor total a pagar é de R${valor_total}.')
-
-        print('ingressos vendidos:')
-        for ingresso in ingressos_vendidos:
-            print(ingresso)
-
-def compra_ingresso3():
-    capacidade_maxima = 15
-    valor_ingresso_inteiro = 30
-    valor_ingresso_meio = 15
-    ingressos_vendidos = []
-    total_inteiros = 0
-    total_meios = 0
-
-    while True:
-        tipo_ingresso = input(
-            'voce deseja comprar ingressos i, m ou s para sair da compra: ')
-
-        if tipo_ingresso == 'i':
-            ingressos_inteiros = int(
-                input('quantos ingressos inteiros você deseja comprar: '))
-            if total_inteiros + ingressos_inteiros + total_meios > capacidade_maxima:
-                print('desculpe, a sala está lotada.')
-            else:
-                ingressos_vendidos.append(f'{ingressos_inteiros} ingressos inteiros')
-                total_inteiros += ingressos_inteiros
-        elif tipo_ingresso == 'm':
-            ingressos_meios = int(
-                input('quantos ingressos de meia-entrada você deseja comprar: '))
-            if total_meios + ingressos_meios + total_inteiros > capacidade_maxima:
-                print('desculpe, a sala está lotada.')
-            else:
-                ingressos_vendidos.append(f'{ingressos_meios} ingressos de meia-entrada')
-                total_meios += ingressos_meios
-        elif tipo_ingresso == 's':
-            break
-
-        else:
-            print("opcao invalida, por favor, escolha entre 'inteiros', 'meia-entrada'"
-                  " ou 'encerrar'.")
-
-    total_ingressos = total_inteiros + total_meios
-
-    if total_ingressos <= capacidade_maxima:
-        valor_total = (total_inteiros * valor_ingresso_inteiro) + (
-                total_meios * valor_ingresso_meio)
-        print(f'o valor total a pagar é de R${valor_total}.')
-
-        print('Ingressos vendidos:')
-        for ingresso in ingressos_vendidos:
-            print(ingresso)
-def filmes_cartaz():
-    print('\033[97mfilmes em cartazes sao:')
-    print('\033[91m1-homem ranha')
-    print('2-vingadores')
-    print('3-deadpool 3')
-    print('0-menu do cliente\033[0;0m')
-def filme_1():
-    filmeh = 'homem aranha'
-    horarios = '13', '14', '15'
-    print(f'os horarios disponiveis sao:{horarios}')
-    horario = int(input('que horario vc deseja: '))
-    print(f'{filmeh} no horario das {horario} horas')
-
-    op = 99
-    while (op != 0):
-        menu_comidas()
-        break
-def filme_2():
-    filmev = 'vingadores'
-    horarios = '14', '16', '18'
-    print(f'os horarios disponiveis sao:{horarios}')
-    horario = int(input('que horario vc deseja: '))
-    print(f'{filmev} no horario das {horario} horas')
-
-    op = 99
-    while (op != 0):
-        menu_comidas()
-        break
-def filme_3():
-    filmed = 'deadpool'
-    horarios = '15', '17', '19'
-    print(f'os horarios disponiveis sao:{horarios}')
-    horario = int(input('que horario vc deseja: '))
-    print(f'{filmed} no horario das {horario} horas')
-
-    op = 99
-    while (op != 0):
-        menu_comidas()
-        break
-def menu_comidas():
-    print('\033[34m_______MENU DE COMIDAS________\033[0;0m')
-    print('\033[96m1-comidas')
-    print('2-combos')
-    print('0-seguir ao filme\033[0;0m')
-    op = int(input('\033[34moque voce deseja: \033[0;0m'))
-
-    if (op == 1):
-        comidas = print('essas sao as comidas:''pipoca', 'chocolates', 'salgadinho', 'refrigerantes')
-        comida = input('quais comidas o senhor(a) deseja: ')
-        print(f'obrigado pela compra da(s) {comida}')
-
-    elif (op == 2):
-        combos = print('esses sao os combos:''pipoca tamanho gigante', 'refil de 1 litro de refrigerante',
-                       'barras de chocolate')
-        combo = input('quais combos o senhor(a) deseja: ')
-        print(f'obrigado por ter escolhido nosso(s) combo(s) de {combo}')
-
-    elif (op == 0):
-        print('\033[93mseguindo ao filme... \033[0;0m')
+    # Cria o arquivo .TXT
+    nota_fiscal = open("resumo das compras", "w")
+    nota_fiscal.write(f"nome: {nome}\n")
+    nota_fiscal.write(f"sala: {sala_escolhida}\n")
+    nota_fiscal.write(f"tipo de filme: {opcao_escolhida}\n")
+    nota_fiscal.write(f"quantidade de inteiros: {quantidade_inteiros}\n")
+    nota_fiscal.write(f"quantidade de meios: {quantidade_meios}\n")
+    nota_fiscal.write(f"valor total da compra: {valor_total}\n")
+    nota_fiscal.close()
+    print('Nota fiscal gerada com sucesso!!')

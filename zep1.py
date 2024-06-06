@@ -1,8 +1,45 @@
 import cine
 from babel.dates import format_date
 from datetime import datetime
-
-usuarios = {'joseph': ['joseph', 2, 'zep']}
+promotions = {
+    "terça-feira": {
+        "nome": "Terça 2x1",
+        "detalhes": ["Ingressos em dobro: Na compra de um ingresso, o segundo é gratuito."],
+        "desconto": 0.0  # Sem desconto adicional
+    },
+    "quarta-feira": {
+        "nome": "Quarta do Cliente Fiel",
+        "detalhes": ["Desconto para membros: 50% de desconto no ingresso para clientes cadastrados.",
+                     "Acumule pontos: Dobre os pontos de fidelidade para cada ingresso comprado."],
+        "desconto": 0.50  # 50% de desconto para membros
+    }
+}
+salas = {
+    1: {
+        "nome": "Sala 1 - 2D",
+        "preco_ingresso_inteiro": 15.00,
+        "preco_ingresso_meio": 7.50,
+        "num_poltronas": 100,
+        "opcoes": ["dublado", "legendado"]
+    },
+    2: {
+        "nome": "Sala 2 - 3D",
+        "preco_ingresso_inteiro": 20.00,
+        "preco_ingresso_meio": 10.00,
+        "num_poltronas": 80,
+        "opcoes": ["dublado", "legendado"]
+    },
+    3: {
+        "nome": "Sala 3 - IMAX",
+        "preco_ingresso_inteiro": 25.00,
+        "preco_ingresso_meio": 12.50,
+        "num_poltronas": 60,
+        "opcoes": ["dublado", "legendado"]
+    }
+}
+ocupacao_salas = {sala_id: sala_info["num_poltronas"] for sala_id, sala_info in salas.items()}
+lista_compras = []
+usuarios = {'joseph': ['joseph', 2, 'zep'],'kaue': ['kaka', 2, 'kaka1']}
 filmes = ['vingadores', 'homem aranha', 'deadpool']
 opmenu = 99
 
@@ -61,31 +98,6 @@ while (opmenu != 0):
                     print('\033[91mobrigado por nos visitar, tenha um otimo dia!\033[0;0')
                     break
                 elif (opcliente == 1):
-                    opingresso = 99
-                    while (opingresso != 0):
-                        cine.menu_salas()
-                        opingresso = int(input('qual opcao voce deseja: '))
-                        if (opingresso == 1):
-                            cine.compra_ingresso1()
-                        elif (opingresso == 2):
-                            cine.compra_ingresso2()
-                        elif (opingresso == 3):
-                            cine.compra_ingresso3()
-                        elif (opingresso == 0):
-                            break
+                   cine.exibir_salas()
 
-                elif (opcliente == 2):
-                    opescolha = 99
-                    while (opescolha != 0):
-                        cine.filmes_cartaz()
-                        opescolha = int(input('digite a opcao: \033[0;0m'))
 
-                        if (opescolha == 0):
-                            print('segindo ao menu do cliente..')
-                            break
-                        elif (opescolha == 1):
-                            cine.filme_1()
-                        elif (opescolha == 2):
-                            cine.filme_2()
-                        elif (opescolha == 3):
-                            cine.filme_3()
