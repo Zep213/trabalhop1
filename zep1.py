@@ -80,7 +80,11 @@ while opmenu != 0:
                 elif opadm == 7:
                     print(promocao)
                 elif opadm == 8:
-                    cine.pedidos_clientes(salas, promocao)
+                    cine.pedidos_clientes()
+                elif opadm == 9:
+                    filmes_breve = ['veloses furiosos', 'tarzan', 'umanji', 'toy story' ,'era do gelo']
+                    print('filmes que vai ser adicionados em breve no nosso catalago')
+                    print(filmes_breve)
                 elif opadm == 0:
                     print('saindo...')
                     break
@@ -108,7 +112,6 @@ while opmenu != 0:
                     opfilme = 99
                     while opfilme != 0:
                         cine.menu_filmes()
-                        opfilme = cine.validar_num('Digite o numero do filme que voce deseja assistir: ')
                         if opfilme == 0:
                             print('voltando ao menu do cliente...')
                             break

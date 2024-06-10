@@ -1,16 +1,18 @@
 from datetime import datetime
+import random
+
 
 promocao = {
     'Monday': {
         'nome': 'terça 2x1',
         'detalhes': ['ingressos em dobro: na compra de um ingresso, o segundo é gratuito.'],
-        'desconto': 0.50},
+        'desconto': 0.0},
 
     'Wednesday': {
         'nome': 'quarta do cliente fiel',
         'detalhes': [
-            'desconto para membros: 50% de desconto no ingresso para clientes cadastrados.', ],
-        'desconto': 0.50},
+            'Bônus especial de quarta-feira do cliente : Desconto adicional de 10%.'],
+        'desconto': 0.10},
 
     }
 
@@ -32,9 +34,8 @@ salas = {
         'preco_ingresso_meios': 17.50,
         'num_poltronas': 15,
         'opcoes': ['dublado'] + ['legendado']}}
-
+codigo = random.randint(1, 99)
 ocupacao_salas = {sala_id: sala_info["num_poltronas"] for sala_id, sala_info in salas.items()}
-lista_compras = []
 dia = datetime.now().strftime("%A")
 dia_promocao = promocao.get(dia, {"nome": "nenhuma promocao disponivel", "detalhes": [""],
                                   "desconto": 0.0})
@@ -129,7 +130,7 @@ def mostrar_salas():
 
 
 def escolher_sala():
-    global quantidade_inteiros , quantidade_meios, preco_desconto_inteiro, preco_desconto_meio, sala_escolhida, opcao_escolhida, sala_info
+    global valor, quantidade_inteiros, quantidade_meios, nota_fiscal
     mostrar_salas()
     while True:
         sala_escolhida = validar_num('\ndigite o numero da sala escolhida: ')
@@ -145,12 +146,12 @@ def escolher_sala():
             break
         else:
             print("opcao invalida, por favor, escolha 'dublado' ou 'legendado'.")
-
-        preco_desconto_inteiro = sala_info['preco_ingresso_inteiros'] * (1 - dia_promocao['desconto'])
-        preco_desconto_meio = sala_info['preco_ingresso_meios'] * (1 - dia_promocao['desconto'])
     while True:
         quantidade_inteiros = validar_num('digite a quantidade de ingressos inteiros: ')
         quantidade_meios = validar_num('digite a quantidade de meio-ingressos: ')
+        valor_total_ingressos = quantidade_inteiros + quantidade_meios
+        valor_total = valor_total_ingressos
+        print(f'esse é seu codigo: {codigo}')
         ingressos_gratis_inteiros = quantidade_inteiros // 2
         ingressos_gratis_meios = quantidade_meios // 2
         total_ingressos = quantidade_inteiros + quantidade_meios + ingressos_gratis_meios + ingressos_gratis_inteiros
@@ -160,7 +161,6 @@ def escolher_sala():
         else:
             ocupacao_salas[sala_escolhida] -= total_ingressos
             break
-    ingresso_comp = quantidade_inteiros + quantidade_meios
     desconto = dia_promocao["desconto"]
     if dia == "Monday":
         quantidade_inteiros_totais = quantidade_inteiros + ingressos_gratis_inteiros
@@ -173,87 +173,83 @@ def escolher_sala():
         quantidade_meios_totais = quantidade_meios
 
     desconto = dia_promocao["desconto"]
-    if dia == "quarta":
+    if dia == "Wednesday":
         desconto += 0.10
         print(
-            "Bônus especial de quarta-feira aplicado para clientes fieis: Desconto adicional de 10%")
-
+            "Bônus especial de quarta-feira do cliente : Desconto adicional de 10%")
     desconto = dia_promocao["desconto"]
-
     if total_ingressos > ocupacao_salas[sala_escolhida]:
         print('quantidade de ingressos excede o numero de poltronas disponiveis.')
     else:
         ocupacao_salas[sala_escolhida] -= total_ingressos
     desconto = dia_promocao["desconto"]
-    if dia == "quarta":
-        desconto += 0.10
-        print(
-            "Bônus especial de quarta-feira aplicado para clientes fieis: Desconto adicional de 10%")
-def menu_filmes():
-        print('\033[97mfilmes em cartazes sao:')
-        print('\033[91m1-homem ranha')
-        print('2-vingadores')
-        print('3-deadpool 3')
-        print('0-menu do cliente\033[0;0m')
+    nota_fiscal = open("\nresumo das compras", "w")
+    nota_fiscal.write(f'nome: {nome}')
+    nota_fiscal.write(f"sala: {sala_escolhida}")
+    nota_fiscal.write(f'ingressos inteiros:{quantidade_inteiros}')
+    nota_fiscal.write(f'ingressos meios:{quantidade_meios}')
+    nota_fiscal.write(f"preco original do ingresso: R$ {sala_info['preco_ingresso_inteiros']:}")
+    nota_fiscal.write(f"preco original do ingresso: R$ {sala_info['preco_ingresso_meios']}:")
+    nota_fiscal.write(f'valor total: R${valor_total_ingressos}')
+    nota_fiscal.write(f'filme: {escolha_film}')
+    nota_fiscal.write(f'horario da: {horario} horas')
+    nota_fiscal.close()
 
+
+
+def menu_filmes():
+        global escolha_film
+        verificar = verificacao()
+        if verificar:
+            print('\033[97mfilmes em cartazes sao:')
+            print('\033[91m1-homem ranha')
+            print('2-vingadores')
+            print('3-deadpool 3')
+            print('0-menu do cliente\033[0;0m')
+            escolha_film = validar_num('digite o numero do filme que voce escolheu: ')
+        else:
+            print('erro!! codigo que voce digitou esta incorreto, tente novamente'
+                  ', esta compra nao sera debitada')
+            return menu_cliente()
 
 def menu_comidas():
     print('\033[34m_______MENU DE COMIDAS________\033[0;0m')
     comidas = {'pipoca': 10, 'refri': 5}
     compras = []
-    total = 0
-    opcao = validar_texto(
-        'deseja comprar comida (C) ou nao quiser comprar (N): ')
-
-    if opcao == 'C' or opcao == 'c':
-        global escolhac, total_compra
-        print('alimentos disponiveis: ')
-        for comida, valor in comidas.items():
-            print(comida, '- R$', valor)
-        pergunta = validar_texto('deseja comprar mais de uma comida (sim) ou (nao)')
-        if pergunta == 'sim':
-            repete = validar_num('quantas comidas vc deseja comprar? ')
-            for i in range(repete):
-                escolhac = validar_texto('digite o nome do alimento que deseja comprar: ')
-                qtde = validar_num('quantos(as): ')
-                if escolhac in comidas:
-                    total = qtde * valor
-                else:
-                    print('comida nao disponivel')
-            for comida in comidas:
-                compras.append(comidas)
-            for compra in compras:
-                total_compra = total
-            print('total da compra:', 'R$', total_compra)
-            print('\033[93mseguiu ao filme...\033[0;0m')
-        elif pergunta == 'nao':
+    escolha_comida = []
+    while True:
+        opcao = validar_texto(
+            'deseja comprar comida (C) ou se nao quiser comprar (N): ')
+        if opcao.lower() == 'c':
             print('alimentos disponiveis: ')
             for comida, valor in comidas.items():
                 print(comida, '- R$', valor)
-                escolhac = validar_texto('digite o nome do alimento que deseja comprar: ')
-                qtde = validar_num('quantos(as): ')
-                if escolhac in comidas:
-                    total = qtde * valor
-                else:
-                    print('comida nao disponivel')
-            for comida in comidas:
-                compras.append(comidas)
-            for compra in compras:
-                total_compra = total
-            print('total da compra:', 'R$', total_compra)
-            print('\033[93mseguiu ao filme...\033[0;0m')
-
-    if opcao == 'N' or opcao == 'n':
-        qtde = 0
-        valor = 0
-        total = qtde * valor
-        total_compra = total
-        escolhac = print('\033[93mseguiu ao filme...\033[0;0m')
-
+            escolhac = validar_texto(
+                'digite o nome do alimento que deseja comprar: ')
+            escolha_comida.append(escolhac)
+            if escolhac in comidas:
+                qtde = int(input('quantos: '))
+                total = qtde * comidas[escolhac]
+                print(escolhac, '- R$', total)
+                compras.append(total)
+                total_compra = 0
+                for compra in compras:
+                    total_compra += compra
+                print('total da compra: R$', total_compra)
+            else:
+                print('comida nao disponivel')
+        elif opcao.lower() == 'n':
+            print('\033[93mseguindo para o filme...\033[0;0m')
+            nota_fiscal.write(f'comida escolhida: {escolha_comida}')
+            nota_fiscal.write(f'total compra de comidas: R${valor}')
+            break
+        else:
+            print('opcao invalida. por favor, escolha C ou N.')
+            return menu_comidas()
 
 
 def menu1():
-    global filme1
+    global filme1, horario
     filme1 = 'homem aranha'
     horarios = ['13', '14', '15']
     print(f'Os horários disponíveis são: {(horarios)}')
@@ -265,7 +261,7 @@ def menu1():
         print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
 
 def menu2():
-    global filme2
+    global filme2, horario
     filme2 = 'vingadores'
     horarios = ['14', '16', '18']
     print(f'Os horários disponíveis são: {(horarios)}')
@@ -278,7 +274,7 @@ def menu2():
 
 
 def menu3():
-    global filme3
+    global filme3, horario
     filme3 = 'deadpool'
     horarios = ['15', '17', '19']
     print(f'Os horários disponíveis são: {(horarios)}')
@@ -291,15 +287,8 @@ def menu3():
 
 
 
-def pedidos_clientes(dict, dict2):
-    valor_total_sala = quantidade_inteiros * preco_desconto_inteiro + quantidade_meios * preco_desconto_meio
-    valor_total = quantidade_inteiros * preco_desconto_inteiro + quantidade_meios * preco_desconto_meio + total_compra
-
-    nota_fiscal = open("resumo das compras", "w")
-    nota_fiscal.write(f"nome: {nome}\n")  # nome do cliente que esta comprando
-    nota_fiscal.write(f"sala: {sala_escolhida}\n")  # numero da sala
-    nota_fiscal.write(f"tipo de filme: {opcao_escolhida}\n")  # dublado ou legendado
-    nota_fiscal.write(f"quantidade de inteiros: {quantidade_inteiros}\n")
-    nota_fiscal.write(f"quantidade de meios: {quantidade_meios}\n")
-    nota_fiscal.write(f"valor total da compra: {valor_total}\n")
-    nota_fiscal.close()
+def verificacao():
+    campo = validar_num('digite seu codigo: ')
+    if campo == codigo:
+        return True
+    return False
