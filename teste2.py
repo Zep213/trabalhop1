@@ -171,7 +171,7 @@ while True:
                             ingresso_comp = quantidade_inteiros + quantidade_meios
 
                             desconto = dia_promocao["desconto"]
-                            if dia == "terca":
+                            if dia == "Monday":
                                 ingressos_gratis_inteiros = quantidade_inteiros
                                 ingressos_gratis_meios = quantidade_meios
                                 quantidade_inteiros_totais = quantidade_inteiros + ingressos_gratis_inteiros
@@ -223,7 +223,7 @@ while True:
                                         opescolha = int(input('digite a opcao: \033[0;0m'))
 
                                         if (opescolha == 0):
-                                            print('seguindo ao menu do cliente..')
+                                            print('voltando ao menu do cliente..')
                                             break
 
                                         elif (opescolha == 1):
@@ -242,7 +242,7 @@ while True:
                                             compras = []
                                             print('bem-vindo', nome)
                                             opcao = input(
-                                                'deseja comprar comida (C) ou nao quiser comprar(N): ').strip()
+                                                'deseja comprar comida (C) ou nao quiser comprar (N): ').strip()
 
                                             if opcao == 'C' or opcao == 'c':
                                                 print('alimentos disponiveis: ')
@@ -268,7 +268,6 @@ while True:
                                                 valor = 0
                                                 total = qtde * valor
                                                 total_compra = total
-                                                total_compra == total
                                                 escolhac = print('\033[93mseguiu ao filme...\033[0;0m')
                                                 break
 
@@ -314,7 +313,6 @@ while True:
                                                 valor = 0
                                                 total = qtde * valor
                                                 total_compra = total
-                                                total_compra == total
                                                 escolhac = print('\033[93mseguiu ao filme...\033[0;0m')
                                                 break
 
@@ -350,7 +348,6 @@ while True:
                                                         compras.append(comidas)
                                                     for compra in compras:
                                                         total_compra = total
-                                                        total_compra == total
                                                     print('total da compra:', 'R$', total_compra)
                                                     print('\033[93mseguiu ao filme...\033[0;0m')
                                                     break
@@ -427,8 +424,8 @@ while True:
                         print(f'{len(filmes)} filme(s) foram adicionados!!')
 
                 elif (opfilme == 3):
-                    for indices_att in filmes:
-                        print(f'{filmes.index(indices_att)} - {indices_att}')
+                    for indices in filmes:
+                        print(f'{filmes.index(indices)} - {indices}')
                     busca_filme = int(input('digite o indice do filme que voce quer atualizar: '))
                     att_mudanca = input('digite a mudança que voce quer fazer no filme: ')
                     filmes[busca_filme] = att_mudanca

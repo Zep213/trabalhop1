@@ -3,9 +3,6 @@ from datetime import datetime
 
 promocao = {
     'Monday': {
-        'nome': 'segunda normalizada', 'detalhes': ['sem desconto.'], 'desconto': 0.0},
-
-    'Tuesday': {
         'nome': 'terça 2x1',
         'detalhes': ['ingressos em dobro: na compra de um ingresso, o segundo é gratuito.'],
         'desconto': 0.50},
@@ -16,22 +13,7 @@ promocao = {
             'desconto para membros: 50% de desconto no ingresso para clientes cadastrados.', ],
         'desconto': 0.50},
 
-    'Thursday': {
-        'nome': 'quinta normalizada', 'detalhes': ['sem desconto.'], 'desconto': 0.0},
-
-    'Friday': {
-        'nome': 'sexta da promocao',
-        'detalhes': ['desconto em todos os ingressos para filmes lancados de hoje.'],
-        'desconto': 0.10},
-
-    'Saturday': {
-        'nome': 'sabado familia',
-        'detalhes': [
-            'desconto para familias: ingressos com preco especial para grupos de quatro ou mais pessoas.'],
-        'desconto': 0.20},
-
-    'Sunday': {
-        'nome': 'domingo normalizado', 'detalhes': ['sem desconto.'], 'desconto': 0.0}}
+    }
 
 salas = {
     1: {'nome': 'sala 1 - 2D',
@@ -60,8 +42,8 @@ dia_promocao = promocao.get(dia, {"nome": "nenhuma promocao disponivel", "detalh
 
 
 def listar_para(list):
-    for indices_att in list:
-        print(f'{list.index(indices_att)} - {indices_att}')
+    for indices in list:
+        print(f'{list.index(indices)} - {indices}')
 
 
 def adicionar_film(list):
@@ -87,6 +69,8 @@ def menu_adm():
     print('4-excluir filme')
     print('5-buscar filme')
     print('6-lista dos filmes adicionados')
+    print('7-promoçoes da semana')
+    print('8-pedidos dos clientes')
     print('0-sair\033[0;0m')
 
 
@@ -99,9 +83,10 @@ def menu_main():
 
 
 def cadastrar_cliente(dict):
-    nome = validar_texto('digite seu nome')
-    login = validar_texto('digite seu login')
-    senha = validar_texto('digite sua senha')
+    global nome
+    nome = validar_texto('digite seu nome: ')
+    login = validar_texto('digite seu login: ')
+    senha = validar_texto('digite sua senha: ')
     dict[login] = [nome, 1, senha]
     print('Cadastro realizado com sucesso!!!\n')
 
@@ -109,7 +94,7 @@ def cadastrar_cliente(dict):
 def menu_cliente():
     print('\033[34m________MENU CLIENTE________\033[0;0m')
     print('\033[96m1-compra de ingressos')
-    print('\0332-filmes em cartazes/horarios')
+    print('2-filmes em cartazes/horarios')
     print('0-sair\033[0;0m')
 
 
@@ -135,7 +120,7 @@ def mostrar_salas():
         print(f"- {detalhe}")
 
     print("\nSalas disponíveis:")
-    for sala_id, sala_info in salas.items():
+    for sala_id, sala_info in salas.items():#sala_id e sala_info ta sendo repetido 2 vezes e com 2 valores diferentes
         poltronas_disponiveis = ocupacao_salas[sala_id]
         print(
             f"{sala_id}: {sala_info['nome']} - Preço do ingresso inteiro: R$ {sala_info['preco_ingresso_inteiros']} - Preço do meio-ingresso: R$ {sala_info['preco_ingresso_meios']} - Poltronas disponíveis: {poltronas_disponiveis}")
@@ -145,7 +130,7 @@ def mostrar_salas():
 
 
 def escolher_sala():
-    global preco_desconto_meio, preco_desconto_inteiro
+    global quantidade_inteiros , quantidade_meios, preco_desconto_inteiro, preco_desconto_meio, sala_escolhida, opcao_escolhida
     mostrar_salas()
     while True:
         sala_escolhida = validar_num('\ndigite o numero da sala escolhida: ')
@@ -155,8 +140,8 @@ def escolher_sala():
         else:
             print('sala invalida. por favor, escolha uma sala valida.')
     while True:
-        opcao_escolhida = input("voce prefere assistir ao filme dublado ou legendado: ").lower()
-        print(f"opcao escolhida: {opcao_escolhida}, opcoes disponiveis: {sala_info['opcoes']}")
+        opcao_escolhida = validar_texto("voce prefere assistir ao filme dublado ou legendado: ").lower()
+        print(f"opcao escolhida: {opcao_escolhida}")
         if opcao_escolhida in sala_info["opcoes"]:
             break
         else:
@@ -167,7 +152,9 @@ def escolher_sala():
     while True:
         quantidade_inteiros = validar_num('digite a quantidade de ingressos inteiros: ')
         quantidade_meios = validar_num('digite a quantidade de meio-ingressos: ')
-        total_ingressos = quantidade_inteiros + quantidade_meios
+        ingressos_gratis_inteiros = quantidade_inteiros // 2
+        ingressos_gratis_meios = quantidade_meios // 2
+        total_ingressos = quantidade_inteiros + quantidade_meios + ingressos_gratis_meios + ingressos_gratis_inteiros
         if total_ingressos > ocupacao_salas[sala_escolhida]:
             print(f'numero de ingressos excede o numero de poltronas disponíveis'
                   f'({ocupacao_salas[sala_escolhida]} poltronas restantes).')
@@ -176,13 +163,12 @@ def escolher_sala():
             break
     ingresso_comp = quantidade_inteiros + quantidade_meios
     desconto = dia_promocao["desconto"]
-    if dia == "terca":
-        ingressos_gratis_inteiros = quantidade_inteiros
-        ingressos_gratis_meios = quantidade_meios
+    if dia == "Monday":
         quantidade_inteiros_totais = quantidade_inteiros + ingressos_gratis_inteiros
         quantidade_meios_totais = quantidade_meios + ingressos_gratis_meios
         print(
-            f"promocao terça 2x1 aplicada: voce recebe {ingressos_gratis_inteiros} ingressos inteiros grátis e {ingressos_gratis_meios} meio-ingressos grátis!")
+            f"promocao segunda 2x1 aplicada: voce recebe {ingressos_gratis_inteiros} ingressos inteiros grátis e "
+            f"{ingressos_gratis_meios} meio-ingressos grátis!")
     else:
         quantidade_inteiros_totais = quantidade_inteiros
         quantidade_meios_totais = quantidade_meios
@@ -195,8 +181,108 @@ def escolher_sala():
 
     desconto = dia_promocao["desconto"]
 
-    total_ingressos = preco_desconto_inteiro + preco_desconto_meio
     if total_ingressos > ocupacao_salas[sala_escolhida]:
         print('quantidade de ingressos excede o numero de poltronas disponiveis.')
     else:
         ocupacao_salas[sala_escolhida] -= total_ingressos
+    desconto = dia_promocao["desconto"]
+    if dia == "quarta":
+        desconto += 0.10
+        print(
+            "Bônus especial de quarta-feira aplicado para clientes fieis: Desconto adicional de 10%")
+def menu_filmes():
+        print('\033[97mfilmes em cartazes sao:')
+        print('\033[91m1-homem ranha')
+        print('2-vingadores')
+        print('3-deadpool 3')
+        print('0-menu do cliente\033[0;0m')
+
+
+def menu_comidas():
+    print('\033[34m_______MENU DE COMIDAS________\033[0;0m')
+    comidas = {'pipoca': 10, 'refri': 5}
+    compras = []
+    opcao = validar_texto(
+        'deseja comprar comida (C) ou nao quiser comprar (N): ').strip()
+
+    if opcao == 'C' or opcao == 'c':
+        global escolhac
+        print('alimentos disponiveis: ')
+        for comida, valor in comidas.items():
+            print(comida, '- R$', valor)
+        escolhac = validar_texto('digite o nome do alimento que deseja comprar: ')
+        qtde = validar_num('quantos: ')
+        if escolhac in comidas:
+            total = qtde * valor
+            print(escolhac, '- R$', total)
+            for comida in comidas:
+                compras.append(comidas)
+            for compra in compras:
+                total_compra = total
+            print('total da compra:', 'R$', total_compra)
+            print('\033[93mseguiu ao filme...\033[0;0m')
+        else:
+            print('comida nao disponivel')
+    if opcao == 'N' or opcao == 'n':
+        qtde = 0
+        valor = 0
+        total = qtde * valor
+        total_compra = total
+        escolhac = print('\033[93mseguiu ao filme...\033[0;0m')
+        return menu_main()
+
+
+def menu1():
+    global filme1
+    filme1 = 'homem aranha'
+    horarios = ['13', '14', '15']
+    print(f'Os horários disponíveis são: {(horarios)}')
+    horario = input('que horario voce deseja: ').strip()
+    if horario in horarios:
+        print(f'{filme1} no horario das {horario} horas')
+        return menu_comidas()
+    else:
+        print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
+
+def menu2():
+    global filme2
+    filme2 = 'vingadores'
+    horarios = ['14', '16', '18']
+    print(f'Os horários disponíveis são: {(horarios)}')
+    horario = input('que horario voce deseja: ').strip()
+    if horario in horarios:
+        print(f'{filme2} no horario das {horario} horas')
+        return menu_comidas()
+    else:
+        print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
+
+
+def menu3():
+    global filme3
+    filme3 = 'deadpool'
+    horarios = ['15', '17', '19']
+    print(f'Os horários disponíveis são: {(horarios)}')
+    horario = input('que horario voce deseja: ').strip()
+    if horario in horarios:
+        print(f'{filme3} no horario das {horario} horas')
+        return menu_comidas()
+    else:
+        print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
+
+
+
+def pedidos_clientes():
+    preco_final_inteiro = salas["preco_ingresso_inteiro"] * (1 - promocao)
+    preco_final_meio = sala_info["preco_ingresso_meio"] * (1 - promocao)
+    valor_total_inteiros = quantidade_inteiros * preco_final_inteiro
+    valor_total_meios = quantidade_meios * preco_final_meio
+    valor_total = valor_total_inteiros + valor_total_meios
+
+    nota_fiscal = open("resumo das compras", "w")
+    nota_fiscal.write(f"nome: {nome}\n")  # nome do cliente que esta comprando
+    nota_fiscal.write(f"sala: {sala_escolhida}\n")  # numero da sala
+    nota_fiscal.write(f"tipo de filme: {opcao_escolhida}\n")  # dublado ou legendado
+    nota_fiscal.write(f"quantidade de inteiros: {quantidade_inteiros}\n")
+    nota_fiscal.write(f"quantidade de meios: {quantidade_meios}\n")
+    nota_fiscal.write(f"valor total da compra: {valor_total}\n")
+    nota_fiscal.close()

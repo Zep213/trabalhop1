@@ -155,9 +155,9 @@ while True:
 
         # Cria o arquivo .TXT
         nota_fiscal = open("resumo das compras", "w")
-        nota_fiscal.write(f"nome: {nome_cliente}\n")
-        nota_fiscal.write(f"sala: {sala_escolhida}\n")
-        nota_fiscal.write(f"tipo de filme: {opcao_escolhida}\n")
+        nota_fiscal.write(f"nome: {nome_cliente}\n") #nome do cliente que esta comprando
+        nota_fiscal.write(f"sala: {sala_escolhida}\n")#numero da sala
+        nota_fiscal.write(f"tipo de filme: {opcao_escolhida}\n")#dublado ou legendado
         nota_fiscal.write(f"quantidade de inteiros: {quantidade_inteiros}\n")
         nota_fiscal.write(f"quantidade de meios: {quantidade_meios}\n")
         nota_fiscal.write(f"valor total da compra: {valor_total}\n")
