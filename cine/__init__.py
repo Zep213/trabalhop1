@@ -1,4 +1,3 @@
-from babel.dates import format_date
 from datetime import datetime
 
 promocao = {
@@ -130,7 +129,7 @@ def mostrar_salas():
 
 
 def escolher_sala():
-    global quantidade_inteiros , quantidade_meios, preco_desconto_inteiro, preco_desconto_meio, sala_escolhida, opcao_escolhida
+    global quantidade_inteiros , quantidade_meios, preco_desconto_inteiro, preco_desconto_meio, sala_escolhida, opcao_escolhida, sala_info
     mostrar_salas()
     while True:
         sala_escolhida = validar_num('\ndigite o numero da sala escolhida: ')
@@ -202,34 +201,55 @@ def menu_comidas():
     print('\033[34m_______MENU DE COMIDAS________\033[0;0m')
     comidas = {'pipoca': 10, 'refri': 5}
     compras = []
+    total = 0
     opcao = validar_texto(
-        'deseja comprar comida (C) ou nao quiser comprar (N): ').strip()
+        'deseja comprar comida (C) ou nao quiser comprar (N): ')
 
     if opcao == 'C' or opcao == 'c':
-        global escolhac
+        global escolhac, total_compra
         print('alimentos disponiveis: ')
         for comida, valor in comidas.items():
             print(comida, '- R$', valor)
-        escolhac = validar_texto('digite o nome do alimento que deseja comprar: ')
-        qtde = validar_num('quantos: ')
-        if escolhac in comidas:
-            total = qtde * valor
-            print(escolhac, '- R$', total)
+        pergunta = validar_texto('deseja comprar mais de uma comida (sim) ou (nao)')
+        if pergunta == 'sim':
+            repete = validar_num('quantas comidas vc deseja comprar? ')
+            for i in range(repete):
+                escolhac = validar_texto('digite o nome do alimento que deseja comprar: ')
+                qtde = validar_num('quantos(as): ')
+                if escolhac in comidas:
+                    total = qtde * valor
+                else:
+                    print('comida nao disponivel')
             for comida in comidas:
                 compras.append(comidas)
             for compra in compras:
                 total_compra = total
             print('total da compra:', 'R$', total_compra)
             print('\033[93mseguiu ao filme...\033[0;0m')
-        else:
-            print('comida nao disponivel')
+        elif pergunta == 'nao':
+            print('alimentos disponiveis: ')
+            for comida, valor in comidas.items():
+                print(comida, '- R$', valor)
+                escolhac = validar_texto('digite o nome do alimento que deseja comprar: ')
+                qtde = validar_num('quantos(as): ')
+                if escolhac in comidas:
+                    total = qtde * valor
+                else:
+                    print('comida nao disponivel')
+            for comida in comidas:
+                compras.append(comidas)
+            for compra in compras:
+                total_compra = total
+            print('total da compra:', 'R$', total_compra)
+            print('\033[93mseguiu ao filme...\033[0;0m')
+
     if opcao == 'N' or opcao == 'n':
         qtde = 0
         valor = 0
         total = qtde * valor
         total_compra = total
         escolhac = print('\033[93mseguiu ao filme...\033[0;0m')
-        return menu_main()
+
 
 
 def menu1():
@@ -237,7 +257,7 @@ def menu1():
     filme1 = 'homem aranha'
     horarios = ['13', '14', '15']
     print(f'Os horários disponíveis são: {(horarios)}')
-    horario = input('que horario voce deseja: ').strip()
+    horario = validar_texto('que horario voce deseja: ')
     if horario in horarios:
         print(f'{filme1} no horario das {horario} horas')
         return menu_comidas()
@@ -249,7 +269,7 @@ def menu2():
     filme2 = 'vingadores'
     horarios = ['14', '16', '18']
     print(f'Os horários disponíveis são: {(horarios)}')
-    horario = input('que horario voce deseja: ').strip()
+    horario = validar_texto('que horario voce deseja: ')
     if horario in horarios:
         print(f'{filme2} no horario das {horario} horas')
         return menu_comidas()
@@ -262,7 +282,7 @@ def menu3():
     filme3 = 'deadpool'
     horarios = ['15', '17', '19']
     print(f'Os horários disponíveis são: {(horarios)}')
-    horario = input('que horario voce deseja: ').strip()
+    horario = validar_texto('que horario voce deseja: ')
     if horario in horarios:
         print(f'{filme3} no horario das {horario} horas')
         return menu_comidas()
@@ -271,12 +291,9 @@ def menu3():
 
 
 
-def pedidos_clientes():
-    preco_final_inteiro = salas["preco_ingresso_inteiro"] * (1 - promocao)
-    preco_final_meio = sala_info["preco_ingresso_meio"] * (1 - promocao)
-    valor_total_inteiros = quantidade_inteiros * preco_final_inteiro
-    valor_total_meios = quantidade_meios * preco_final_meio
-    valor_total = valor_total_inteiros + valor_total_meios
+def pedidos_clientes(dict, dict2):
+    valor_total_sala = quantidade_inteiros * preco_desconto_inteiro + quantidade_meios * preco_desconto_meio
+    valor_total = quantidade_inteiros * preco_desconto_inteiro + quantidade_meios * preco_desconto_meio + total_compra
 
     nota_fiscal = open("resumo das compras", "w")
     nota_fiscal.write(f"nome: {nome}\n")  # nome do cliente que esta comprando

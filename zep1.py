@@ -80,7 +80,7 @@ while opmenu != 0:
                 elif opadm == 7:
                     print(promocao)
                 elif opadm == 8:
-                    cine.pedidos_clientes()
+                    cine.pedidos_clientes(salas, promocao)
                 elif opadm == 0:
                     print('saindo...')
                     break
@@ -111,16 +111,16 @@ while opmenu != 0:
                         opfilme = cine.validar_num('Digite o numero do filme que voce deseja assistir: ')
                         if opfilme == 0:
                             print('voltando ao menu do cliente...')
-
+                            break
                         elif opfilme == 1:
                             cine.menu1()
-
+                            break
                         elif opfilme == 2:
                             cine.menu2()
-
+                            break
                         elif opfilme == 3:
                             cine.menu3()
-
+                            break
         else:
             print('erro!!nome ou senha invalidos')
     elif opmenu == 0:
