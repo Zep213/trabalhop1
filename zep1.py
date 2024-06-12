@@ -48,8 +48,8 @@ while opmenu != 0:
     cine.menu_main()
     opmenu = cine.validar_num('digite a opçao que deseja: \033[0;0m')
     if opmenu == 1:
-        login = input('digite seu loguin')
-        senha = input('digite sua senha')
+        login = cine.validar_texto('digite seu loguin: ')
+        senha = cine.validar_texto('digite sua senha: ')
         logado = cine.log_usuario(login, senha, usuarios, 2)
         if logado:
             opadm = 99
@@ -83,7 +83,7 @@ while opmenu != 0:
                     cine.pedidos_clientes()
                 elif opadm == 9:
                     filmes_breve = ['veloses furiosos', 'tarzan', 'umanji', 'toy story' ,'era do gelo']
-                    print('filmes que vai ser adicionados em breve no nosso catalago')
+                    print('filmes que vao ser adicionados em breve no nosso catalago:')
                     print(filmes_breve)
                 elif opadm == 0:
                     print('saindo...')
@@ -95,8 +95,8 @@ while opmenu != 0:
     elif opmenu == 2:
         cine.cadastrar_cliente(usuarios)
     elif opmenu == 3:
-        login = cine.validar_texto('digite seu loguin')
-        senha = cine.validar_texto('digite sua senha')
+        login = cine.validar_texto('digite seu loguin: ')
+        senha = cine.validar_texto('digite sua senha: ')
         logado_cl = cine.log_usuario(login, senha, usuarios, 1)
         if logado_cl:
             opcliente = 99
@@ -112,18 +112,18 @@ while opmenu != 0:
                     opfilme = 99
                     while opfilme != 0:
                         cine.menu_filmes()
+                        opfilme = cine.validar_num('digite o numero do filme que voce deseja assistir: ')
                         if opfilme == 0:
                             print('voltando ao menu do cliente...')
-                            break
                         elif opfilme == 1:
                             cine.menu1()
-                            break
+
                         elif opfilme == 2:
                             cine.menu2()
-                            break
+
                         elif opfilme == 3:
                             cine.menu3()
-                            break
+
         else:
             print('erro!!nome ou senha invalidos')
     elif opmenu == 0:

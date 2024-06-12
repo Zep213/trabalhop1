@@ -4,7 +4,7 @@ import random
 
 promocao = {
     'Monday': {
-        'nome': 'terça 2x1',
+        'nome': 'segunda 2x1',
         'detalhes': ['ingressos em dobro: na compra de um ingresso, o segundo é gratuito.'],
         'desconto': 0.0},
 
@@ -12,9 +12,7 @@ promocao = {
         'nome': 'quarta do cliente fiel',
         'detalhes': [
             'Bônus especial de quarta-feira do cliente : Desconto adicional de 10%.'],
-        'desconto': 0.10},
-
-    }
+        'desconto': 0.10}}
 
 salas = {
     1: {'nome': 'sala 1 - 2D',
@@ -71,6 +69,7 @@ def menu_adm():
     print('6-lista dos filmes adicionados')
     print('7-promoçoes da semana')
     print('8-pedidos dos clientes')
+    print('9-em breve...')
     print('0-sair\033[0;0m')
 
 
@@ -149,7 +148,7 @@ def escolher_sala():
     while True:
         quantidade_inteiros = validar_num('digite a quantidade de ingressos inteiros: ')
         quantidade_meios = validar_num('digite a quantidade de meio-ingressos: ')
-        valor_total_ingressos = quantidade_inteiros + quantidade_meios
+        valor_total_ingressos = quantidade_inteiros  + quantidade_meios
         valor_total = valor_total_ingressos
         print(f'esse é seu codigo: {codigo}')
         ingressos_gratis_inteiros = quantidade_inteiros // 2
@@ -191,14 +190,11 @@ def escolher_sala():
     nota_fiscal.write(f"preco original do ingresso: R$ {sala_info['preco_ingresso_inteiros']:}")
     nota_fiscal.write(f"preco original do ingresso: R$ {sala_info['preco_ingresso_meios']}:")
     nota_fiscal.write(f'valor total: R${valor_total_ingressos}')
-    nota_fiscal.write(f'filme: {escolha_film}')
-    nota_fiscal.write(f'horario da: {horario} horas')
     nota_fiscal.close()
 
 
 
 def menu_filmes():
-        global escolha_film
         verificar = verificacao()
         if verificar:
             print('\033[97mfilmes em cartazes sao:')
@@ -206,7 +202,6 @@ def menu_filmes():
             print('2-vingadores')
             print('3-deadpool 3')
             print('0-menu do cliente\033[0;0m')
-            escolha_film = validar_num('digite o numero do filme que voce escolheu: ')
         else:
             print('erro!! codigo que voce digitou esta incorreto, tente novamente'
                   ', esta compra nao sera debitada')
@@ -228,7 +223,7 @@ def menu_comidas():
                 'digite o nome do alimento que deseja comprar: ')
             escolha_comida.append(escolhac)
             if escolhac in comidas:
-                qtde = int(input('quantos: '))
+                qtde = validar_num('quantos: ')
                 total = qtde * comidas[escolhac]
                 print(escolhac, '- R$', total)
                 compras.append(total)
@@ -240,8 +235,9 @@ def menu_comidas():
                 print('comida nao disponivel')
         elif opcao.lower() == 'n':
             print('\033[93mseguindo para o filme...\033[0;0m')
-            nota_fiscal.write(f'comida escolhida: {escolha_comida}')
-            nota_fiscal.write(f'total compra de comidas: R${valor}')
+            with open('../nota comida.txt', 'a') as nota_fiscal:
+                nota_fiscal.write(f'comida escolhida: {escolhac}')
+                nota_fiscal.write(f'total compra de comidas: R${total_compra}')
             break
         else:
             print('opcao invalida. por favor, escolha C ou N.')
@@ -249,43 +245,41 @@ def menu_comidas():
 
 
 def menu1():
-    global filme1, horario
-    filme1 = 'homem aranha'
+    global filme, horario
+    filme = 'homem aranha'
     horarios = ['13', '14', '15']
     print(f'Os horários disponíveis são: {(horarios)}')
     horario = validar_texto('que horario voce deseja: ')
     if horario in horarios:
-        print(f'{filme1} no horario das {horario} horas')
-        return menu_comidas()
+        print(f'{filme} no horario das {horario} horas')
+        menu_comidas()
     else:
         print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
 
 def menu2():
-    global filme2, horario
-    filme2 = 'vingadores'
+    global filme, horario
+    filme = 'vingadores'
     horarios = ['14', '16', '18']
     print(f'Os horários disponíveis são: {(horarios)}')
     horario = validar_texto('que horario voce deseja: ')
     if horario in horarios:
-        print(f'{filme2} no horario das {horario} horas')
-        return menu_comidas()
+        print(f'{filme} no horario das {horario} horas')
+        menu_comidas()
     else:
         print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
 
 
 def menu3():
-    global filme3, horario
-    filme3 = 'deadpool'
+    global filme, horario
+    filme = 'deadpool'
     horarios = ['15', '17', '19']
     print(f'Os horários disponíveis são: {(horarios)}')
     horario = validar_texto('que horario voce deseja: ')
     if horario in horarios:
-        print(f'{filme3} no horario das {horario} horas')
-        return menu_comidas()
+        print(f'{filme} no horario das {horario} horas')
+        menu_comidas()
     else:
         print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
-
-
 
 def verificacao():
     campo = validar_num('digite seu codigo: ')
