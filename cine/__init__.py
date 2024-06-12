@@ -269,7 +269,6 @@ def menu2():
         print('\033[31mdesculpe, nao temos esse horario disponivel.\033[0;0m')
 
 
-
 def menu3():
     global filme, horario
     filme = 'deadpool'
